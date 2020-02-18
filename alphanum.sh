@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#Author: Abdalla El Ghannam
+#Date: Feb 17 2020
+#Purpose: Get password for natas16
+
+#note: This is generally a bash practice for me. The logic is almost identical to the code found https://www.jonyschats.nl/writeups/overthewire/natas/natas15/
+
+#alphanum.sh brute forces the password for natas16 through multiple curl requests.
+#A while loop that stops when password length is 32.
+#A for loop that tries sequential combinations of passwords through modifying the sql query in the curl request.
+#Multiple debugging statements included. So we can see what is happening.
 
 p=""
 len=${#p}
